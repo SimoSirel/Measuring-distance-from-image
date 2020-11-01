@@ -1,0 +1,38 @@
+# Directions
+https://medium.com/@iitbguha/tensorflow-object-detection-api-ddc9135cbe69
+
+# In conda cmd, in the same environment
+pip install tensorflow==1.15
+pip install protobuf protobuf-compiler lxml cython pillow contextlib2 scikit-learn
+pip install cocotools
+
+# Requires visual studio c++ tools
+https://visualstudio.microsoft.com/thank-you-downloading-visual-studio/?sku=BuildTools&rel=16
+
+# Download 1.13.0, extract to Measuring-distance-from-image folder
+# Change folder name to models
+https://github.com/tensorflow/models/tags
+
+#Download, extract to Measuring-distance-from-image folder
+http://download.tensorflow.org/models/object_detection/ssd_mobilenet_v2_coco_2018_03_29.tar.gz
+# You can also try other models.
+https://github.com/tensorflow/models/blob/master/research/object_detection/g3doc/tf1_detection_zoo.md
+
+
+#Replace 'pwd' with file path to Measuring-distance-from-image folder
+set PYTHONPATH='pwd'\models\research;'pwd'\models\research/slim
+#for example:
+set PYTHONPATH=C:\Users\Villem\Desktop\ITS\Measuring-distance-from-image\models\research;C:\Users\Villem\Desktop\ITS\Measuring-distance-from-image\models\research/slim
+
+
+# In models\research\slim directory run
+python setup.py build
+python setup.py install
+
+# In models\research\
+python setup.py build
+python setup.py install
+
+#create folder "data" in Measuring-distance-from-image
+# This folder is for saving video and image files
+
