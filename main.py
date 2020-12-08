@@ -291,7 +291,7 @@ try:
 			
 			#How many people are on camera
             		try:
-                		cv2.putText(image, str(len(coords)), (int(Width*0.95),int(Height*0.95)), font, 3, (0, 255, 0), 2, cv2.LINE_AA)
+                		cv2.putText(image, str(len(coordinates)), (int(Width*0.95),int(Height*0.95)), font, 3, (0, 255, 0), 2, cv2.LINE_AA)
             		except:
                 		cv2.putText(image, "0", (int(Width*0.95),int(Height*0.95)), font, 3, (0, 255, 0), 2, cv2.LINE_AA)
 		
