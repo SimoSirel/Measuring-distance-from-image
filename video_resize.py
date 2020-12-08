@@ -21,7 +21,7 @@ if __name__ == '__main__':
     left_video_filepath = params.get('-out', 'data/smaller_left_video.avi')
     right_video_filepath = params.get('-out', 'data/smaller_right_video.avi')
     fps_reduction = params.get('-fps_reduce', 3)
-    size_reduction = params.get('-size_reduce', 4)
+    size_reduction = params.get('-size_reduce', 1)
 
     # Initialize VideoCapture
     input_video = cv2.VideoCapture(input_video_filepath)
