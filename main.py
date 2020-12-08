@@ -9,7 +9,7 @@ import itertools
 import os
 os.environ['CUDA_VISIBLE_DEVICES'] = '0'
 
-from yolov3.utils import Load_Yolo_model, image_preprocess, postprocess_boxes, nms, draw_bbox, read_class_names
+from yolov3.utils import draw_bbox, read_class_names
 
 #Kui kasutate vanemat (v1) Tensorflow versiooni, 
 #siis äkki peab siin midagi muutma, kui ei tööta
@@ -18,7 +18,6 @@ from yolov3.utils import Load_Yolo_model, image_preprocess, postprocess_boxes, n
 
 import tensorflow as tf
 from scipy.spatial import distance as dist
-from time import time
 from collections import defaultdict
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
@@ -54,6 +53,15 @@ def calculate_coord(bbox, width, height):
 	ymin = bbox[0] * height
 	xmax = bbox[3] * width
 	ymax = bbox[2] * height
+
+	return [xmin, ymin, xmax - xmin, ymax - ymin]
+
+def calc_coord_trackbox(bbox):
+	#`(min x, min y, max x,max y)`.
+	xmin = bbox[0] 
+	ymin = bbox[1] 
+	xmax = bbox[2] 
+	ymax = bbox[3] 
 
 	return [xmin, ymin, xmax - xmin, ymax - ymin]
 	
@@ -180,7 +188,7 @@ with open('coco.names.txt', 'r') as f:
 
 # read pre-trained model and config file
 net = cv2.dnn.readNet('./model_data/yolov3.weights', 'yolov3.cfg') # or ./model_data/yolov4.weights and yolov4.cfg
-max_cosine_distance = 0.7
+max_cosine_distance = 0.8
 nn_budget = None
 
 			#initialize deep sort object
@@ -193,7 +201,7 @@ try:
 	with tqdm(total=total_frames) as pbar:
 		for image in video_to_images(input_video):
 			t1 = time.time()
-			net.setInput(cv2.dnn.blobFromImage(image, 0.00392, (416,416), (0,0,0), True, crop=False))
+			net.setInput(cv2.dnn.blobFromImage(image, 0.003, (416,416), (0,0,0), True, crop=False)) #416,416
 
 			layer_names = net.getLayerNames()
 			output_layers = [layer_names[i[0] - 1] for i in net.getUnconnectedOutLayers()]
@@ -208,11 +216,12 @@ try:
 			
 			for out in outs:
 				for detection in out:
-					
+				
 					scores = detection[5:]
 					class_id = np.argmax(scores)
 					if class_id == 0:
 						confidence = scores[class_id]
+						#print(confidence)
 						if confidence > 0.1:
 							center_x = int(detection[0] * Width)
 							center_y = int(detection[1] * Height)
@@ -240,34 +249,33 @@ try:
 			
 			tracked_bboxes = []
 			for track in tracker.tracks:
-				#print(track)
 				
-				if not track.is_confirmed() or track.time_since_update > 5:
+				if not track.is_confirmed() or track.time_since_update > 1:
 					continue
-				bbox = track.to_tlbr() # Get the corrected/predicted bounding box
+				bbox = track.to_tlbr() # Get the corrected/predicted bounding box #`(min x, miny, max x,max y)`.
 		
 				class_name = track.get_class() #Get the class name of particular object
 				tracking_id = track.track_id # Get the ID for the particular track
 				index = key_list[val_list.index(class_name)] # Get predicted object index by object name
-				
 				tracked_bboxes.append(bbox.tolist() + [tracking_id, index]) # Structure data, that we could use it with our draw_bbox function
 
 			
 			# draw detection on frame
 			image = draw_bbox(image, tracked_bboxes, CLASSES=CLASSES, tracking=True)
 		
-			indices = cv2.dnn.NMSBoxes(boxes_l, confidences_l, 0.1, 0.1)
+			#indices = cv2.dnn.NMSBoxes(boxes_l, confidences_l, 0.1, 0.1)
 
-			# Tuples of (x, y) coords
+			
 			centroids = []
-			# Lists of  [x, y, width, height]
 			coordinates = []
-			for i in indices:
-				i = i[0]
-				box = boxes[i]
-				centr = calculate_centr(box)
-				centroids.append(centr)
-				coordinates.append(box)
+			if tracked_bboxes != []:
+				for box in tracked_bboxes :
+					coords = calc_coord_trackbox(box)
+					print(coords)
+					
+					centr = calculate_centr(coords)
+					centroids.append(centr)
+					coordinates.append(coords)
 				#if class_ids[i]==0:
 				#	label = str(classes[class_id]) 
 				#	cv2.rectangle(image, (round(box[0]),round(box[1])), (round(box[0]+box[2]),round(box[1]+box[3])), (0, 0, 0), 2)
@@ -288,8 +296,6 @@ try:
 			times.append(t3-t1)
 			
 			times = times[-20:]
-			
-
 			ms = sum(times)/len(times)*1000
 			
 			print("Time: {:.2f}ms".format(ms))
