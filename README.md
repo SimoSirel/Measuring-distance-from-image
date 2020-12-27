@@ -12,13 +12,9 @@ wget -P model_data https://pjreddie.com/media/files/yolov3.weights
 ### for windows users:
 curl https://pjreddie.com/media/files/yolov3.weights --output yolov3.weights
 
-<<<<<<< HEAD
+### Download the test video file from Video.txt link.
 
-## Download the test video file from Video.txt link.
-
-## Read the file Setup.txt to download necessary files and read information about the setup.
-=======
->>>>>>> e3768a0aa0773d789bc31a0f4a6ee0971f237cad
+### Read the file Setup.txt to download necessary files and read information about the setup.
 
  
 ## run with 'python main.py'
