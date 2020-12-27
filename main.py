@@ -129,7 +129,7 @@ def draw_rects(image, coordinates, color = (0, 0, 255), thickness = 3):
         x2 = x1 + int(coord[2])
         y2 = y1 + int(coord[3])
 
-        image = cv2.rectangle(image, (x1, y1), (x2, y2), color, thickness)
+        #image = cv2.rectangle(image, (x1, y1), (x2, y2), color, thickness)
 
     return image
 
@@ -148,15 +148,15 @@ def draw_lines(image, permutations, distances, color = (0, 255, 255), thickness 
         image = cv2.line(image, point1, point2, color, thickness)
         mid = tuple(map(int, calc_midpoint(point1, point2)))
  
-        if round(distances[i], 1) < 2.0:
-            cv2.putText(image, str(round(distances[i], 1)) +'m', mid, font, 2, (0, 0, 255), 2, cv2.LINE_AA)
-        else:
-            cv2.putText(image, str(round(distances[i], 1)) +'m', mid, font, 2, (255, 255, 255), 2, cv2.LINE_AA)
+        #if round(distances[i], 1) < 2.0:
+         #   cv2.putText(image, str(round(distances[i], 1)) +'m', mid, font, 2, (0, 0, 255), 2, cv2.LINE_AA)
+        #else:
+         #   cv2.putText(image, str(round(distances[i], 1)) +'m', mid, font, 2, (255, 255, 255), 2, cv2.LINE_AA)
 
 
     return image
 
-input_video_filename = 'data/smaller_video.avi'
+input_video_filename = 'data/test_video_4K_25fps.mp4'
 output_video_filename = 'data/color_text_output.avi'
 
 font = cv2.FONT_HERSHEY_SIMPLEX
